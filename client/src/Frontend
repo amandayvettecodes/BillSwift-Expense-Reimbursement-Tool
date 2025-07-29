@@ -1,0 +1,47 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const Dashboard = () => {
+  const [expenses, setExpenses] = useState([]);
+  const [form, setForm] = useState({
+    user: 'demoUser',
+    amount: '',
+    category: '',
+    description: ''
+  });
+
+  useEffect(() => {
+    axios.get('https://your-backend-url.onrender.com/api/expenses/my?user=demoUser')
+      .then(res => setExpenses(res.data));
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await axios.post('https://your-backend-url.onrender.com/api/expenses/submit', form);
+    const res = await axios.get('https://your-backend-url.onrender.com/api/expenses/my?user=demoUser');
+    setExpenses(res.data);
+    setForm({ ...form, amount: '', category: '', description: '' });
+  };
+
+  return (
+    <div>
+      <h2>Expense Dashboard</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="number" placeholder="Amount" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} required />
+        <input type="text" placeholder="Category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} required />
+        <input type="text" placeholder="Description" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+        <button type="submit">Submit</button>
+      </form>
+
+      <ul>
+        {expenses.map((exp, i) => (
+          <li key={i}>
+            ${exp.amount} - {exp.category} ({exp.status})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Dashboard;
