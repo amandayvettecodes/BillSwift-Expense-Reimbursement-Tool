@@ -1,6 +1,7 @@
 {
   "name": "billswift-client",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -20,3 +21,4 @@
     "vite": "^4.4.0"
   }
 }
+
