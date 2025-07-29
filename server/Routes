@@ -1,0 +1,35 @@
+const router = require('express').Router();
+const Expense = require('../models/Expense');
+
+// Submit expense
+router.post('/submit', async (req, res) => {
+  try {
+    const expense = new Expense(req.body);
+    await expense.save();
+    res.json(expense);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// View expenses by user
+router.get('/my', async (req, res) => {
+  try {
+    const expenses = await Expense.find({ user: req.query.user });
+    res.json(expenses);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Approve expense
+router.post('/approve/:id', async (req, res) => {
+  try {
+    const expense = await Expense.findByIdAndUpdate(req.params.id, { status: 'Approved' }, { new: true });
+    res.json(expense);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+module.exports = router;
